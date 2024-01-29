@@ -2,7 +2,11 @@ import torch
 
 # inspired from Colbert repo: https://github.com/stanford-futuredata/ColBERT
 
-PyTorch_over_1_6 = float(".".join([torch.__version__.split('.')[0], torch.__version__.split('.')[1]])) >= 1.6
+# PyTorch_over_1_6 = float(".".join([torch.__version__.split('.')[0], torch.__version__.split('.')[1]])) >= 1.6
+PyTorch_over_1_6 = all([
+    int(torch.__version__.split('.')[0]) >= 1,
+    int(torch.__version__.split('.')[1]) >= 6,
+    ])
 
 
 # replace this with  contextlib.nullcontext if python >3.7

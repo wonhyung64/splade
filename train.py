@@ -1,7 +1,7 @@
 #%%
 import os
 # os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
-os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1, 2, 3"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1, 2, 3"
 import yaml
 import torch
 from tqdm import tqdm
@@ -76,7 +76,8 @@ config.update(x_obj.config)
 init_dict["fp16"] = config["fp16"]
 # config["train_batch_size"] = 32
 # config["max_length"] = 10
-config
+# config["record_frequency"] = 100
+
 #%%
 random_seed = set_seed_from_config(config)
 

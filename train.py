@@ -5,6 +5,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1, 2, 3"
 import yaml
 import torch
 from tqdm import tqdm
+from datetime import datetime
 from omegaconf import OmegaConf
 from splade.tasks import amp
 from splade.utils.utils import parse
@@ -35,9 +36,11 @@ def read_yaml(path):
 
 
 #%%
+expt_name = f"expt_{datetime.strftime(datetime.now(), '%y%m%d_%H%M%S_%f')}"
+
 CONFIG_PATH = '/root/won/splade/splade/conf/'
 CONFIG_NAME = 'config_splade_base'
-# CONFIG_NAME = 'config_default'
+
 _, __, x_obj = read_yaml(f"{CONFIG_PATH}{CONFIG_NAME}.yaml")
 x_obj.config
 config = {
@@ -73,7 +76,7 @@ config.update(x_obj.config)
 init_dict["fp16"] = config["fp16"]
 # config["train_batch_size"] = 32
 # config["max_length"] = 10
-
+config
 #%%
 random_seed = set_seed_from_config(config)
 
@@ -274,22 +277,14 @@ for i in tqdm(range(1, nb_iterations + 1)):
         scheduler.step()
 
 
-# save_checkpoint(step=i, perf=loss, is_best=False, final_checkpoint=True)  # save the last anyway
-
-
-
-#         model_to_save = model.module if hasattr(self.model, "module") else self.model  # when using DataParallel
-#         # it is practical (although redundant) to save model weights using huggingface API, because if the model has
-#         # no other params, we can reload it easily with .from_pretrained()
-#         output_dir = os.path.join(self.config["checkpoint_dir"], "model")
-#         model_to_save.transformer_rep.transformer.save_pretrained(output_dir)
-#         tokenizer = model_to_save.transformer_rep.tokenizer
-#         tokenizer.save_pretrained(output_dir)
-#         if model_to_save.transformer_rep_q is not None:
-#             output_dir_q = os.path.join(self.config["checkpoint_dir"], "model_q")
-#             model_to_save.transformer_rep_q.transformer.save_pretrained(output_dir_q)
-#             tokenizer = model_to_save.transformer_rep_q.tokenizer
-#             tokenizer.save_pretrained(output_dir_q)
-#         super().save_checkpoint(**kwargs)
-
-# %%
+    if i % config["record_frequency"] == 0:
+        model_to_save = model.module if hasattr(model, "module") else model  # when using DataParallel
+        output_dir = os.path.join(config["checkpoint_dir"], expt_name, "model", f"iter_{i}")
+        model_to_save.transformer_rep.transformer.save_pretrained(output_dir)
+        tokenizer = model_to_save.transformer_rep.tokenizer
+        tokenizer.save_pretrained(output_dir)
+        if model_to_save.transformer_rep_q is not None:
+            output_dir_q = os.path.join(config["checkpoint_dir"], expt_name, "model_q", f"iter_{i}")
+            model_to_save.transformer_rep_q.transformer.save_pretrained(output_dir_q)
+            tokenizer = model_to_save.transformer_rep_q.tokenizer
+            tokenizer.save_pretrained(output_dir_q)

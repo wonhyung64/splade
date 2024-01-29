@@ -5,5 +5,5 @@
 model_ckpt/
 ckpt/
 output/
-*data/
+data/
 experiments/

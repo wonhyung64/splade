@@ -90,3 +90,34 @@ evaluator.index(d_loader)
 
 
 # %%
+import pickle
+
+
+with open('/root/won/splade/models/splade_max_base/index/doc_ids.pkl', 'rb') as f:
+    doc_ids = pickle.load(f)
+    doc_ids[-1]
+    
+import h5py    
+import json
+import numpy as np    
+
+filename = "/root/won/splade/models/splade_max_base/index/array_index.h5py"
+
+array_index = h5py.File(filename, "r")
+
+len(list(array_index.keys()))
+array_index["index_doc_id_10903"][470690]
+array_index["index_doc_id_10903"].__array__().shape
+array_index["index_doc_id_8841821"].__array__().shape
+
+array_index["index_doc_id_10903"][51]
+
+doc_ids[-2]
+
+
+
+
+with open('/root/won/splade/models/splade_max_base/index/index_dist.json', 'r') as f:
+    index_dist = json.load(f)
+len(index_dist)
+max(index_dist.keys())
